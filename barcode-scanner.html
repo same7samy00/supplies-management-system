@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ماسح الباركود</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        #scanner-container { margin: 20px auto; max-width: 400px; }
+        #video { width: 100%; border: 2px solid #4CAF50; border-radius: 8px; }
+        #result { margin: 20px 0; font-size: 18px; font-weight: bold; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>ماسح الباركود</h1>
+    <div id="scanner-container">
+        <video id="video" playsinline></video>
+        <div id="result">جاري البحث عن باركود...</div>
+        <button id="cancelScan">إلغاء المسح</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const result = document.getElementById('result');
+        const cancelBtn = document.getElementById('cancelScan');
+        let scannerInterval;
+
+        // بدء المسح
+        async function startScan() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                video.play();
+                
+                const barcodeDetector = new BarcodeDetector();
+                scannerInterval = setInterval(async () => {
+                    try {
+                        const barcodes = await barcodeDetector.detect(video);
+                        if (barcodes.length > 0) {
+                            const barcode = barcodes[0].rawValue;
+                            result.textContent = `تم مسح: ${barcode}`;
+                            
+                            // إرسال الباركود إلى الصفحة الرئيسية
+                            if (typeof BroadcastChannel !== 'undefined') {
+                                const channel = new BroadcastChannel('barcode_scanner');
+                                channel.postMessage({ type: 'barcode_scanned', barcode: barcode });
+                            }
+                            
+                            // إغلاق الماسح بعد 2 ثانية
+                            setTimeout(() => window.close(), 2000);
+                        }
+                    } catch (e) {
+                        console.error('Barcode detection error:', e);
+                    }
+                }, 1000);
+            } catch (error) {
+                result.textContent = 'خطأ في تشغيل الكاميرا: ' + error.message;
+            }
+        }
+
+        // إلغاء المسح
+        cancelBtn.addEventListener('click', () => {
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            clearInterval(scannerInterval);
+            window.close();
+        });
+
+        // بدء المسح عند تحميل الصفحة
+        if ('BarcodeDetector' in window) {
+            startScan();
+        } else {
+            result.textContent = 'المتصفح لا يدعم ماسح الباركود';
+            cancelBtn.textContent = 'إغلاق';
+        }
+    </script>
+</body>
+</html>
