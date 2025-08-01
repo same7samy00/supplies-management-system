@@ -1,42 +1,28 @@
-// التحقق من حالة الاتصال
-function updateOnlineStatus() {
-    const statusElement = document.getElementById('connection-status');
-    if (navigator.onLine) {
-        statusElement.textContent = 'متصل';
-        statusElement.classList.remove('offline');
-        statusElement.classList.add('online');
-        statusElement.innerHTML = '<i class="fas fa-wifi"></i> متصل';
-    } else {
-        statusElement.textContent = 'غير متصل';
-        statusElement.classList.remove('online');
-        statusElement.classList.add('offline');
-        statusElement.innerHTML = '<i class="fas fa-wifi-slash"></i> غير متصل';
-    }
-}
+import { updateOnlineStatus } from './auth.js';
+import { initPOS } from './pos.js';
 
-// تحديث حالة الاتصال عند التغيير
+// تهيئة Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import firebaseConfig from '../firebase/config.js';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// تمكين التخزين المحلي لـ Firestore
+enableIndexedDbPersistence(db).catch((err) => {
+    console.error("فشل في تمكين التخزين المحلي:", err);
+});
+
+// إدارة حالة الاتصال
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
+document.addEventListener('DOMContentLoaded', updateOnlineStatus);
 
-// تهيئة حالة الاتصال عند التحميل
-document.addEventListener('DOMContentLoaded', () => {
-    updateOnlineStatus();
-    
-    // معالجة تسجيل الدخول
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // هنا يمكنك إضافة التحقق من صحة البيانات
-            console.log('محاولة دخول:', { username, password });
-            
-            // توجيه المستخدم بعد تسجيل الدخول (سيتم تغيير هذا لاحقاً)
-            alert('تم تسجيل الدخول بنجاح! سيتم تحويلك إلى لوحة التحكم.');
-        });
-    }
+// إدارة القائمة الجانبية
+document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('mainContent').classList.toggle('with-sidebar');
 });
 
 // تسجيل Service Worker لتطبيق PWA
@@ -50,4 +36,27 @@ if ('serviceWorker' in navigator) {
                 console.log('ServiceWorker registration failed: ', err);
             });
     });
+}
+
+// تهيئة وحدات النظام
+initPOS();
+
+// التنقل بين الصفحات
+document.querySelectorAll('[data-page]').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = e.target.getAttribute('data-page');
+        loadPage(page);
+    });
+});
+
+function loadPage(page) {
+    // إخفاء جميع الأقسام
+    document.querySelectorAll('.page-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // إظهار القسم المطلوب
+    document.getElementById('welcomeMessage').style.display = 'none';
+    document.getElementById(`${page}Section`).style.display = 'block';
 }
