@@ -1,68 +1,74 @@
 import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { app } from "../firebase/config.js";
+import { showToast } from "./app.js";
 
 const auth = getAuth(app);
 
-// تسجيل الدخول
-document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('username').value + '@example.com';
-    const password = document.getElementById('password').value;
-    
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log('تم تسجيل الدخول:', user);
-        hideLoginModal();
-        updateUserInfo(user);
-    } catch (error) {
-        console.error('خطأ في تسجيل الدخول:', error);
-        alert('خطأ في اسم المستخدم أو كلمة المرور');
-    }
-});
+// إدارة نافذة تسجيل الدخول
+const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
 
-// تسجيل الخروج
-document.getElementById('logoutBtn')?.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        console.log('تم تسجيل الخروج');
-        showLoginModal();
-    } catch (error) {
-        console.error('خطأ في تسجيل الخروج:', error);
-    }
-});
-
-// تحديث معلومات المستخدم
-function updateUserInfo(user) {
-    const userInfoElement = document.getElementById('userInfo');
-    if (userInfoElement) {
-        userInfoElement.innerHTML = `
-            <span>${user.email.split('@')[0]}</span>
-            <i class="fas fa-user-circle" style="margin-right: 8px; font-size: 1.2rem;"></i>
-        `;
-    }
-}
-
-// إظهار/إخفاء نافذة تسجيل الدخول
 function showLoginModal() {
-    document.getElementById('loginModal').style.display = 'flex';
-    document.getElementById('sidebar').classList.remove('active');
-    document.getElementById('mainContent').classList.remove('with-sidebar');
+    loginModal.classList.add('active');
 }
 
 function hideLoginModal() {
-    document.getElementById('loginModal').style.display = 'none';
+    loginModal.classList.remove('active');
 }
 
-// التحقق من حالة المصادقة عند التحميل
+// تسجيل الدخول
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('username').value + '@example.com';
+        const password = document.getElementById('password').value;
+        
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            showToast('تم تسجيل الدخول بنجاح', 'success');
+            hideLoginModal();
+            updateUserInfo(user);
+        } catch (error) {
+            console.error('خطأ في تسجيل الدخول:', error);
+            showToast('خطأ في اسم المستخدم أو كلمة المرور', 'error');
+        }
+    });
+}
+
+// تسجيل الخروج
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            showToast('تم تسجيل الخروج بنجاح', 'success');
+            showLoginModal();
+        } catch (error) {
+            console.error('خطأ في تسجيل الخروج:', error);
+            showToast('حدث خطأ أثناء تسجيل الخروج', 'error');
+        }
+    });
+}
+
+// تحديث معلومات المستخدم
+function updateUserInfo(user) {
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement) {
+        userNameElement.textContent = user.email.split('@')[0];
+    }
+}
+
+// التحقق من حالة المصادقة
 auth.onAuthStateChanged((user) => {
     if (user) {
+        // المستخدم مسجل الدخول
         hideLoginModal();
         updateUserInfo(user);
     } else {
+        // لا يوجد مستخدم مسجل الدخول
         showLoginModal();
     }
 });
-
-// إغلاق نافذة تسجيل الدخول
-document.querySelector('.close-btn')?.addEventListener('click', hideLoginModal);
