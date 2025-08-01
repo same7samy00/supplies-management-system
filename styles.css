@@ -1,105 +1,229 @@
-/* التنسيقات العامة */
-:root {
-    --primary-color: #4CAF50;
-    --secondary-color: #2E7D32;
-    --error-color: #f44336;
-    --warning-color: #ff9800;
-    --text-color: #333;
-    --light-bg: #f5f5f5;
-}
+/* ... (ابق على التنسيقات السابقة) ... */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: 'Tajawal', sans-serif;
-    background-color: var(--light-bg);
-    color: var(--text-color);
-    line-height: 1.6;
-}
-
-#app {
-    max-width: 100%;
-    min-height: 100vh;
-}
-
+/* شريط التنقل العلوي */
 .app-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.app-header h1 {
-    font-size: 1.5rem;
-}
-
-/* حالة الاتصال */
-#connection-status {
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    bottom: 20px;
-    left: 20px;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    background-color: var(--error-color);
-    color: white;
+    top: 0;
+    width: 100%;
     z-index: 1000;
 }
 
-#connection-status.online {
-    background-color: var(--primary-color);
+.header-content {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
 }
 
-/* نموذج تسجيل الدخول */
-.login-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.user-info {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* القائمة الجانبية */
+.sidebar {
+    position: fixed;
+    top: 80px;
+    right: -250px;
+    width: 250px;
+    height: calc(100vh - 80px);
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    transition: right 0.3s;
+    z-index: 999;
 }
 
-.login-container h2 {
+.sidebar.active {
+    right: 0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 1rem 0;
+}
+
+.sidebar li a {
+    display: block;
+    padding: 0.8rem 1.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.sidebar li a:hover {
+    background: var(--light-bg);
+}
+
+.sidebar li a i {
+    margin-left: 8px;
+    width: 20px;
     text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--primary-color);
 }
 
-.login-container input {
+/* المحتوى الرئيسي */
+main {
+    margin-top: 80px;
+    padding: 1.5rem;
+    transition: margin-right 0.3s;
+}
+
+main.with-sidebar {
+    margin-right: 250px;
+}
+
+.welcome-message {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-color);
+}
+
+/* نافذة تسجيل الدخول */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 12px;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.form-group {
     margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: 'Tajawal', sans-serif;
 }
 
-.login-container button {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--primary-color);
+.btn-primary {
+    background: var(--primary-color);
     color: white;
     border: none;
+    padding: 10px 15px;
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Tajawal', sans-serif;
     font-weight: bold;
     transition: background 0.3s;
+    width: 100%;
 }
 
-.login-container button:hover {
-    background-color: var(--secondary-color);
+.btn-primary:hover {
+    background: var(--secondary-color);
 }
 
+/* واجهة نقطة البيع */
+.pos-container {
+    display: none;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+    max-width: 100%;
+    height: 80px;
+    object-fit: contain;
+}
+
+.cart-container {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.cart-items {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+/* تكييم للشاشات الصغيرة */
 @media (max-width: 768px) {
-    .login-container {
-        margin: 1rem;
-        padding: 1.5rem;
+    .sidebar {
+        width: 80%;
+        right: -80%;
+    }
+    
+    main.with-sidebar {
+        margin-right: 80%;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
 }
