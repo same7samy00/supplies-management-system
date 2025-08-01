@@ -1,68 +1,289 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- ... (ابق على الجزء السابق من head كما هو) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المحل المتكامل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
 </head>
 <body>
-    <div id="app">
-        <!-- شريط التنقل العلوي -->
+    <!-- شريط التحميل -->
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+
+    <!-- الهيكل الرئيسي -->
+    <div class="app-container" id="app">
+        <!-- الشريط العلوي -->
         <header class="app-header">
-            <div class="header-content">
-                <button id="menuToggle" class="menu-btn"><i class="fas fa-bars"></i></button>
-                <h1><i class="fas fa-store"></i> نظام إدارة المحل</h1>
-                <div class="user-info" id="userInfo"></div>
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="logo">
+                    <i class="fas fa-store-alt"></i>
+                    <span>نظام الإدارة</span>
+                </h1>
             </div>
-            <div id="connection-status" class="offline">
-                <i class="fas fa-wifi-slash"></i> غير متصل
+            
+            <div class="header-center">
+                <div class="search-box">
+                    <input type="text" placeholder="ابحث عن منتج أو عميل...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-profile">
+                    <img src="assets/user-avatar.png" alt="صورة المستخدم" class="user-avatar">
+                    <span class="user-name" id="userName">مستخدم</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="connection-status offline" id="connectionStatus">
+                    <i class="fas fa-wifi-slash"></i>
+                </div>
             </div>
         </header>
 
         <!-- القائمة الجانبية -->
-        <nav id="sidebar" class="sidebar">
-            <ul>
-                <li><a href="#" data-page="dashboard"><i class="fas fa-home"></i> لوحة التحكم</a></li>
-                <li><a href="#" data-page="pos"><i class="fas fa-cash-register"></i> نقطة البيع</a></li>
-                <li><a href="#" data-page="inventory"><i class="fas fa-boxes"></i> إدارة المخزون</a></li>
-                <li><a href="#" data-page="customers"><i class="fas fa-users"></i> العملاء</a></li>
-                <li><a href="#" data-page="reports"><i class="fas fa-chart-bar"></i> التقارير</a></li>
-                <li><a href="#" data-page="settings"><i class="fas fa-cog"></i> الإعدادات</a></li>
-                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
-            </ul>
-        </nav>
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#dashboard">
+                            <i class="fas fa-home"></i>
+                            <span>لوحة التحكم</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#pos">
+                            <i class="fas fa-cash-register"></i>
+                            <span>نقطة البيع</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#inventory">
+                            <i class="fas fa-boxes"></i>
+                            <span>المخزون</span>
+                            <span class="badge warning">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#customers">
+                            <i class="fas fa-users"></i>
+                            <span>العملاء</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#reports">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>التقارير</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings">
+                            <i class="fas fa-cog"></i>
+                            <span>الإعدادات</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-footer">
+                    <a href="#help" class="help-link">
+                        <i class="fas fa-question-circle"></i>
+                        <span>المساعدة</span>
+                    </a>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
 
         <!-- المحتوى الرئيسي -->
-        <main id="mainContent">
-            <!-- سيتم تحميل المحتوى هنا ديناميكيًا -->
-            <div class="welcome-message" id="welcomeMessage">
-                <h2>مرحباً بك في نظام إدارة المحل</h2>
-                <p>اختر قسمًا من القائمة الجانبية لبدء العمل</p>
-            </div>
+        <main class="main-content" id="mainContent">
+            <!-- محتوى لوحة التحكم -->
+            <section class="content-section active" id="dashboardSection">
+                <div class="section-header">
+                    <h2><i class="fas fa-home"></i> لوحة التحكم</h2>
+                    <div class="breadcrumb">
+                        <a href="#">الرئيسية</a>
+                        <span>/</span>
+                        <a href="#" class="active">لوحة التحكم</a>
+                    </div>
+                </div>
+                
+                <div class="stats-cards">
+                    <!-- بطاقة المبيعات -->
+                    <div class="stat-card primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>المبيعات اليوم</h3>
+                            <p>1,245 <span>ر.س</span></p>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i> 12%
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقة العملاء -->
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>عملاء جدد</h3>
+                            <p>24 <span>عميل</span></p>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i> 5%
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقة المخزون -->
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>منتجات منخفضة</h3>
+                            <p>8 <span>منتج</span></p>
+                        </div>
+                        <div class="stat-trend down">
+                            <i class="fas fa-arrow-down"></i> 3%
+                        </div>
+                    </div>
+                    
+                    <!-- بطاقة الأرباح -->
+                    <div class="stat-card danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>صافي الربح</h3>
+                            <p>3,845 <span>ر.س</span></p>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i> 8%
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- أحدث المبيعات -->
+                <div class="recent-sales">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> أحدث العمليات</h3>
+                            <a href="#" class="view-all">عرض الكل</a>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الفاتورة</th>
+                                        <th>العميل</th>
+                                        <th>التاريخ</th>
+                                        <th>المبلغ</th>
+                                        <th>الحالة</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#INV-2023-001</td>
+                                        <td>محمد أحمد</td>
+                                        <td>05/12/2023</td>
+                                        <td>245 ر.س</td>
+                                        <td><span class="status-badge success">مكتمل</span></td>
+                                        <td>
+                                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#INV-2023-002</td>
+                                        <td>أحمد علي</td>
+                                        <td>05/12/2023</td>
+                                        <td>180 ر.س</td>
+                                        <td><span class="status-badge success">مكتمل</span></td>
+                                        <td>
+                                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#INV-2023-003</td>
+                                        <td>سارة محمد</td>
+                                        <td>04/12/2023</td>
+                                        <td>320 ر.س</td>
+                                        <td><span class="status-badge pending">قيد الانتظار</span></td>
+                                        <td>
+                                            <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                            <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- محتوى نقطة البيع -->
+            <section class="content-section" id="posSection">
+                <!-- سيتم تحميله ديناميكيًا -->
+            </section>
+            
+            <!-- محتوى المخزون -->
+            <section class="content-section" id="inventorySection">
+                <!-- سيتم تحميله ديناميكيًا -->
+            </section>
         </main>
 
-        <!-- نافذة تسجيل الدخول (تظهر أول مرة) -->
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</h2>
+        <!-- نافذة تسجيل الدخول -->
+        <div class="login-modal" id="loginModal">
+            <div class="login-container">
+                <div class="login-header">
+                    <img src="assets/logo.png" alt="شعار النظام" class="login-logo">
+                    <h2>تسجيل الدخول</h2>
+                    <p>الرجاء إدخال بيانات الدخول للوصول إلى النظام</p>
+                </div>
+                
                 <form id="loginForm">
                     <div class="form-group">
-                        <label for="username">اسم المستخدم:</label>
-                        <input type="text" id="username" required>
+                        <label for="username"><i class="fas fa-user"></i> اسم المستخدم</label>
+                        <input type="text" id="username" placeholder="أدخل اسم المستخدم" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="password">كلمة المرور:</label>
-                        <input type="password" id="password" required>
+                        <label for="password"><i class="fas fa-lock"></i> كلمة المرور</label>
+                        <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+                        <a href="#" class="forgot-password">نسيت كلمة المرور؟</a>
                     </div>
-                    <button type="submit" class="btn-primary">دخول <i class="fas fa-sign-in-alt"></i></button>
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
                 </form>
+                
+                <div class="login-footer">
+                    <p>ليس لديك حساب؟ <a href="#">اتصل بالدعم الفني</a></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module" src="scripts/app.js"></script>
-    <script type="module" src="scripts/auth.js"></script>
-    <script type="module" src="scripts/inventory.js"></script>
-    <script type="module" src="scripts/pos.js"></script>
+    <!-- الأكواد البرمجية -->
+    <script src="scripts/app.js" type="module"></script>
+    <script src="scripts/auth.js" type="module"></script>
+    <script src="scripts/pos.js" type="module"></script>
+    <script src="scripts/inventory.js" type="module"></script>
 </body>
 </html>
